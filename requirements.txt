@@ -6,3 +6,4 @@ matplotlib
 seaborn
 nltk
 wordcloud
+rouge-score
