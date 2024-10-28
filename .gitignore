@@ -1,3 +1,9 @@
+# Virtual Enviroments
+env_tf
+
+# Model Files
+src/bert_summary_model
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

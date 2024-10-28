@@ -7,3 +7,6 @@ seaborn
 nltk
 wordcloud
 rouge-score
+tensorflow 
+transformers 
+scikit-learn
