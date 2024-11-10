@@ -10,3 +10,5 @@ rouge-score
 tensorflow 
 transformers 
 scikit-learn
+streamlit
+tf-keras
