@@ -37,28 +37,34 @@ def configure_page():
         """
         <style>
         .main {
-            background-color: #CAD6E1;
+            background-color: #CAD6E1;  /* Columbia Blue */
         }
         .reportview-container {
-            color: #08519C;
+            color: #08519C;  /* Polynesian Blue */
         }
         .title {
             text-align: center;
             font-size: 32px;
-            color: #238B45;
+            color: #238B45;  /* Sea Green */
             font-weight: bold;
         }
         .container {
-            background-color: #DEEBF7;
+            background-color: #DEEBF7;  /* Alice Blue */
             padding: 15px;
             border-radius: 10px;
-            color: #08519C;
+            color: #08519C;  /* Polynesian Blue */
         }
         .button {
-            background-color: #379656;
+            background-color: #379656;  /* Shamrock Green */
             color: white;
             border-radius: 5px;
             font-weight: bold;
+        }
+        .stRadio > label {
+            color: #379656;  /* Shamrock Green */
+        }
+        div[role="radiogroup"] label {
+            color: #379656 !important;  /* Shamrock Green */
         }
         </style>
         """,
@@ -172,6 +178,7 @@ elif menu_option == "Desempeño de los Modelos":
     test_targets, pred_labels = load_predictions()
 
     if metric_choice == "Distribución":
+        metric_description = "Este gráfico de violín muestra de manera comparativa la distribución de puntajes predichos, donde se observa la concentración de valores en diferentes puntos del rango de puntajes."
         df_predictions = pd.read_csv(PREDICTIONS_FILE)
 
         content_scores = df_predictions['Predicted_Content']
@@ -191,7 +198,7 @@ elif menu_option == "Desempeño de los Modelos":
         st.plotly_chart(fig)
     
     elif metric_choice == "Dispersión":
-    
+        metric_description = "Este gráfico muestra cómo se comportan las predicciones del modelo en relación con los valores reales, permitiendo visualizar patrones y sesgos en las predicciones."
         fig = make_subplots(rows=1, cols=2, subplot_titles=("Content", "Wording"))
 
         fig.add_trace(go.Scatter(x=test_targets[:, 0], y=pred_labels[:, 0],
@@ -213,6 +220,7 @@ elif menu_option == "Desempeño de los Modelos":
         fig.update_layout(title="Distribución de Predicciones vs Valores Reales", showlegend=False)
         st.plotly_chart(fig)
         
+    st.sidebar.write(metric_description)
 
 elif menu_option == "Métricas de los modelos":
     st.markdown('<p class="title">Métricas de los modelos</p>', unsafe_allow_html=True)
