@@ -12,3 +12,4 @@ transformers
 scikit-learn
 streamlit
 tf-keras
+streamlit

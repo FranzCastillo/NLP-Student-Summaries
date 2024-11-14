@@ -119,7 +119,7 @@ def calculate_rouge_scores(text: str, summary: str) -> pd.DataFrame:
 
 # Navigation menu
 menu_option = st.sidebar.radio("Selecciona una sección:",
-                               ["Evaluación de Resúmenes", "Desempeño de los Modelos", "Análisis de Resúmenes"])
+                               ["Evaluación de Resúmenes", "Desempeño de los Modelos", "Métricas de los modelos", "Análisis de Resúmenes"])
 
 if menu_option == "Evaluación de Resúmenes":
     st.markdown('<p class="title">Evaluación Automática de Resúmenes</p>', unsafe_allow_html=True)
@@ -166,6 +166,28 @@ if menu_option == "Evaluación de Resúmenes":
 
 elif menu_option == "Desempeño de los Modelos":
     st.markdown('<p class="title">Desempeño de los Modelos</p>', unsafe_allow_html=True)
+
+    df_predictions = pd.read_csv(PREDICTIONS_FILE)
+
+    content_scores = df_predictions['Predicted_Content']
+    wording_scores = df_predictions['Predicted_Wording']
+
+    fig, ax = plt.subplots(1, 2, figsize=(14, 6))
+
+    ax[0].violinplot(content_scores, showmeans=True)
+    ax[0].set_title("Distribución de Predicted_Content")
+    ax[0].set_ylabel("Puntaje Predicho (Content)")
+
+    ax[1].violinplot(wording_scores, showmeans=True)
+    ax[1].set_title("Distribución de Predicted_Wording")
+    ax[1].set_ylabel("Puntaje Predicho (Wording)")
+
+    fig.suptitle("Comparación de Distribuciones de Puntajes: Content y Wording")
+    st.pyplot(fig)
+    
+
+elif menu_option == "Métricas de los modelos":
+    st.markdown('<p class="title">Métricas de los modelos</p>', unsafe_allow_html=True)
     st.sidebar.subheader("Métricas")
     metric_choice = st.sidebar.radio("Selecciona la métrica:", ["MSE", "MAE", "R²"])
     test_targets, pred_labels = load_predictions()
