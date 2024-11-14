@@ -234,3 +234,34 @@ elif menu_option == "Desempeño de los Modelos":
 
 elif menu_option == "Análisis de Resúmenes":
     st.markdown('<p class="title">Análisis de Resúmenes</p>', unsafe_allow_html=True)
+    st.sidebar.subheader("Filtros de Resúmenes")
+    wording_range = st.sidebar.slider(
+        "Rango de Wording Score",
+        0.0,  # Min value
+        1.0,  # Max value
+        (0.0, 1.0),  # Default value
+        0.01  # Step
+    )
+    content_range = st.sidebar.slider("Rango de Content Score", 0.0, 1.0, (0.0, 1.0), 0.01)
+    length_range = st.sidebar.slider(
+        "Rango de Longitud del Resumen",
+        114,  # Valores obtenidos desde results.ipnyb
+        3940,
+        (114, 3940), 10
+    )
+
+    # Load data
+    df_merged = pd.read_csv('../results/rouge_scores.csv')
+
+    if 'summary_length' not in df_merged.columns:
+        df_merged['summary_length'] = df_merged['text'].apply(len)
+
+    # Filter data
+    df_filtered = df_merged[
+        (df_merged['wording'] >= wording_range[0]) & (df_merged['wording'] <= wording_range[1]) &
+        (df_merged['content'] >= content_range[0]) & (df_merged['content'] <= content_range[1]) &
+        (df_merged['summary_length'] >= length_range[0]) & (df_merged['summary_length'] <= length_range[1])
+    ]
+
+    st.subheader("Resúmenes Filtrados")
+    st.write(df_filtered[['text']])
