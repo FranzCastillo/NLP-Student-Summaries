@@ -23,6 +23,7 @@ from rouge_score import rouge_scorer
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from transformers import TFBertForSequenceClassification, BertTokenizer
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 # Constants
 MODEL_PATH = "../src/bert_summary_model"
@@ -201,17 +202,11 @@ elif menu_option == "Métricas de los modelos":
         st.write(f"**MSE (Wording):** {mse_wording:.4f}")
         squared_errors_content = np.square(test_targets[:, 0] - pred_labels[:, 0])
         squared_errors_wording = np.square(test_targets[:, 1] - pred_labels[:, 1])
-        st.subheader("Histograma de Errores Cuadrados (MSE)")
-        fig_mse, (ax_mse_content, ax_mse_wording) = plt.subplots(1, 2, figsize=(12, 5))
-        ax_mse_content.hist(squared_errors_content, bins=20, color='#08519C', edgecolor='white')
-        ax_mse_content.set_title("Errores Cuadrados - Content")
-        ax_mse_content.set_xlabel("Error Cuadrado")
-        ax_mse_content.set_ylabel("Frecuencia")
-        ax_mse_wording.hist(squared_errors_wording, bins=20, color='#238B45', edgecolor='white')
-        ax_mse_wording.set_title("Errores Cuadrados - Wording")
-        ax_mse_wording.set_xlabel("Error Cuadrado")
-        ax_mse_wording.set_ylabel("Frecuencia")
-        st.pyplot(fig_mse)
+        fig = make_subplots(rows=1, cols=2, subplot_titles=("Errores Cuadrados - Content", "Errores Cuadrados - Wording"))
+        fig.add_trace(go.Histogram(x=squared_errors_content, name="Content", nbinsx=20), row=1, col=1)
+        fig.add_trace(go.Histogram(x=squared_errors_wording, name="Wording", nbinsx=20), row=1, col=2)
+        fig.update_layout(title="Histograma de Errores Cuadrados (MSE)", xaxis_title="Error Cuadrado", yaxis_title="Frecuencia")
+        st.plotly_chart(fig)
 
     elif metric_choice == "MAE":
         mae_content = mean_absolute_error(test_targets[:, 0], pred_labels[:, 0])
@@ -221,17 +216,11 @@ elif menu_option == "Métricas de los modelos":
         st.write(f"**MAE (Wording):** {mae_wording:.4f}")
         abs_errors_content = np.abs(test_targets[:, 0] - pred_labels[:, 0])
         abs_errors_wording = np.abs(test_targets[:, 1] - pred_labels[:, 1])
-        st.subheader("Histograma de Errores Absolutos (MAE)")
-        fig_mae, (ax_mae_content, ax_mae_wording) = plt.subplots(1, 2, figsize=(12, 5))
-        ax_mae_content.hist(abs_errors_content, bins=20, color='#08519C', edgecolor='white')
-        ax_mae_content.set_title("Errores Absolutos - Content")
-        ax_mae_content.set_xlabel("Error Absoluto")
-        ax_mae_content.set_ylabel("Frecuencia")
-        ax_mae_wording.hist(abs_errors_wording, bins=20, color='#238B45', edgecolor='white')
-        ax_mae_wording.set_title("Errores Absolutos - Wording")
-        ax_mae_wording.set_xlabel("Error Absoluto")
-        ax_mae_wording.set_ylabel("Frecuencia")
-        st.pyplot(fig_mae)
+        fig = make_subplots(rows=1, cols=2, subplot_titles=("Errores Absolutos - Content", "Errores Absolutos - Wording"))
+        fig.add_trace(go.Histogram(x=abs_errors_content, name="Content", nbinsx=20), row=1, col=1)
+        fig.add_trace(go.Histogram(x=abs_errors_wording, name="Wording", nbinsx=20), row=1, col=2)
+        fig.update_layout(title="Histograma de Errores Absolutos (MAE)", xaxis_title="Error Absoluto", yaxis_title="Frecuencia")
+        st.plotly_chart(fig)
 
     else:  # R^2
         r2_content = r2_score(test_targets[:, 0], pred_labels[:, 0])
@@ -241,17 +230,11 @@ elif menu_option == "Métricas de los modelos":
         st.write(f"**R² (Wording):** {r2_wording:.4f}")
         residuals_content = test_targets[:, 0] - pred_labels[:, 0]
         residuals_wording = test_targets[:, 1] - pred_labels[:, 1]
-        st.subheader("Histograma de Residuos (R²)")
-        fig_r2, (ax_r2_content, ax_r2_wording) = plt.subplots(1, 2, figsize=(12, 5))
-        ax_r2_content.hist(residuals_content, bins=20, color='#08519C', edgecolor='white')
-        ax_r2_content.set_title("Residuos - Content")
-        ax_r2_content.set_xlabel("Residuo")
-        ax_r2_content.set_ylabel("Frecuencia")
-        ax_r2_wording.hist(residuals_wording, bins=20, color='#238B45', edgecolor='white')
-        ax_r2_wording.set_title("Residuos - Wording")
-        ax_r2_wording.set_xlabel("Residuo")
-        ax_r2_wording.set_ylabel("Frecuencia")
-        st.pyplot(fig_r2)
+        fig = make_subplots(rows=1, cols=2, subplot_titles=("Residuos - Content", "Residuos - Wording"))
+        fig.add_trace(go.Histogram(x=residuals_content, name="Content", nbinsx=20), row=1, col=1)
+        fig.add_trace(go.Histogram(x=residuals_wording, name="Wording", nbinsx=20), row=1, col=2)
+        fig.update_layout(title="Histograma de Residuos (R²)", xaxis_title="Residuo", yaxis_title="Frecuencia")
+        st.plotly_chart(fig)
 
     st.sidebar.write(metric_description)
 
