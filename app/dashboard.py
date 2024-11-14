@@ -168,25 +168,51 @@ if menu_option == "Evaluación de Resúmenes":
 
 elif menu_option == "Desempeño de los Modelos":
     st.markdown('<p class="title">Desempeño de los Modelos</p>', unsafe_allow_html=True)
+    metric_choice = st.sidebar.radio("Selecciona la gráfica:", ["Distribución", "Dispersión"])
+    test_targets, pred_labels = load_predictions()
 
-    df_predictions = pd.read_csv(PREDICTIONS_FILE)
+    if metric_choice == "Distribución":
+        df_predictions = pd.read_csv(PREDICTIONS_FILE)
 
-    content_scores = df_predictions['Predicted_Content']
-    wording_scores = df_predictions['Predicted_Wording']
+        content_scores = df_predictions['Predicted_Content']
+        wording_scores = df_predictions['Predicted_Wording']
 
-    fig = go.Figure()
+        fig = go.Figure()
 
-    fig.add_trace(go.Violin(y=content_scores, name="Predicted_Content", box_visible=True, meanline_visible=True))
-    fig.add_trace(go.Violin(y=wording_scores, name="Predicted_Wording", box_visible=True, meanline_visible=True))
+        fig.add_trace(go.Violin(y=content_scores, name="Predicted_Content", box_visible=True, meanline_visible=True))
+        fig.add_trace(go.Violin(y=wording_scores, name="Predicted_Wording", box_visible=True, meanline_visible=True))
 
-    fig.update_layout(
-        title="Comparación de Distribuciones de Puntajes: Content y Wording",
-        yaxis_title="Puntaje Predicho",
-        xaxis_title="Tipo de Puntaje",
-    )
+        fig.update_layout(
+            title="Distribuciones de Puntajes: Content y Wording",
+            yaxis_title="Puntaje Predicho",
+            xaxis_title="Tipo de Puntaje",
+        )
 
-    st.plotly_chart(fig)
+        st.plotly_chart(fig)
     
+    elif metric_choice == "Dispersión":
+    
+        fig = make_subplots(rows=1, cols=2, subplot_titles=("Content", "Wording"))
+
+        fig.add_trace(go.Scatter(x=test_targets[:, 0], y=pred_labels[:, 0],
+                                mode='markers',
+                                name="Content",
+                                marker=dict(color="blue", opacity=0.6)),
+                    row=1, col=1)
+        fig.update_xaxes(title_text="Valor Real (Content)", row=1, col=1)
+        fig.update_yaxes(title_text="Predicción (Content)", row=1, col=1)
+
+        fig.add_trace(go.Scatter(x=test_targets[:, 1], y=pred_labels[:, 1],
+                                mode='markers',
+                                name="Wording",
+                                marker=dict(color="green", opacity=0.6)),
+                    row=1, col=2)
+        fig.update_xaxes(title_text="Valor Real (Wording)", row=1, col=2)
+        fig.update_yaxes(title_text="Predicción (Wording)", row=1, col=2)
+
+        fig.update_layout(title="Distribución de Predicciones vs Valores Reales", showlegend=False)
+        st.plotly_chart(fig)
+        
 
 elif menu_option == "Métricas de los modelos":
     st.markdown('<p class="title">Métricas de los modelos</p>', unsafe_allow_html=True)
