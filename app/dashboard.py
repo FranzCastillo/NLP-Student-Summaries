@@ -22,6 +22,7 @@ import streamlit as st
 from rouge_score import rouge_scorer
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 from transformers import TFBertForSequenceClassification, BertTokenizer
+import plotly.graph_objects as go
 
 # Constants
 MODEL_PATH = "../src/bert_summary_model"
@@ -172,18 +173,18 @@ elif menu_option == "Desempeño de los Modelos":
     content_scores = df_predictions['Predicted_Content']
     wording_scores = df_predictions['Predicted_Wording']
 
-    fig, ax = plt.subplots(1, 2, figsize=(14, 6))
+    fig = go.Figure()
 
-    ax[0].violinplot(content_scores, showmeans=True)
-    ax[0].set_title("Distribución de Predicted_Content")
-    ax[0].set_ylabel("Puntaje Predicho (Content)")
+    fig.add_trace(go.Violin(y=content_scores, name="Predicted_Content", box_visible=True, meanline_visible=True))
+    fig.add_trace(go.Violin(y=wording_scores, name="Predicted_Wording", box_visible=True, meanline_visible=True))
 
-    ax[1].violinplot(wording_scores, showmeans=True)
-    ax[1].set_title("Distribución de Predicted_Wording")
-    ax[1].set_ylabel("Puntaje Predicho (Wording)")
+    fig.update_layout(
+        title="Comparación de Distribuciones de Puntajes: Content y Wording",
+        yaxis_title="Puntaje Predicho",
+        xaxis_title="Tipo de Puntaje",
+    )
 
-    fig.suptitle("Comparación de Distribuciones de Puntajes: Content y Wording")
-    st.pyplot(fig)
+    st.plotly_chart(fig)
     
 
 elif menu_option == "Métricas de los modelos":
